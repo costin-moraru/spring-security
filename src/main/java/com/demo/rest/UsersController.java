@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.model.UserModel;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/admin/api/users")
 public class UsersController {
 	
 	private static final List<UserModel> users = Arrays.asList(
