@@ -1,58 +1,73 @@
 package com.demo.model;
 
-public class UserModel {
-	
-	private Integer id;
-	
-	private String username;
-	
-	private String firstName;
-	
-	private String lastName;
+import java.util.Collection;
+import java.util.Set;
 
-	public UserModel(Integer id, String username, String firstName, String lastName) {
-		this.id = id;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+public class UserModel implements UserDetails {
+	
+	private final Set<? extends GrantedAuthority> authorities;
+	
+	private final String password;
+	
+	private final String username;
+	
+	private final boolean isAccountNonExpired;
+	
+	private final boolean isAccountNonLocked;
+	
+	private final boolean isCredentialsNonExpired;
+	
+	private final boolean isEnabled;
+
+	public UserModel(Set<? extends GrantedAuthority> authorities, String password, String username,
+			boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired,
+			boolean isEnabled) {
+		this.authorities = authorities;
+		this.password = password;
 		this.username = username;
-		this.firstName = firstName;
-		this.lastName = lastName;
-	}
-	
-	public UserModel() {
-		
+		this.isAccountNonExpired = isAccountNonExpired;
+		this.isAccountNonLocked = isAccountNonLocked;
+		this.isCredentialsNonExpired = isCredentialsNonExpired;
+		this.isEnabled = isEnabled;
 	}
 
-	public Integer getId() {
-		return id;
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return authorities;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	@Override
+	public String getPassword() {
+		return password;
 	}
 
+	@Override
 	public String getUsername() {
 		return username;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	@Override
+	public boolean isAccountNonExpired() {
+		return isAccountNonExpired;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	@Override
+	public boolean isAccountNonLocked() {
+		return isAccountNonLocked;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return isCredentialsNonExpired;
 	}
 
-	public String getLastName() {
-		return lastName;
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
 	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	
 	
 
 }

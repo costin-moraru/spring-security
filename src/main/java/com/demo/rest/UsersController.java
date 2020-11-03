@@ -1,6 +1,5 @@
 package com.demo.rest;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,16 +15,11 @@ import com.demo.model.UserModel;
 @RestController
 @RequestMapping("/admin/api/users")
 public class UsersController {
-	
-	private static final List<UserModel> users = Arrays.asList(
-			new UserModel(1, "admin", "user", "administrato"),
-			new UserModel(2, "user", "user", "user"),
-			new UserModel(3, "operator", "user", "operator")
-			);
+
 	
 	@GetMapping
 	public List<UserModel> getUsers() {
-		return users;
+		return null;
 	}
 	
 	@PostMapping
