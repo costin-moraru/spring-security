@@ -64,6 +64,7 @@ public class JwtCheckTokenFilter extends OncePerRequestFilter {
 			);
 			
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+			filterChain.doFilter(request, response);
 		} catch (JwtException e) {
 			throw new IllegalStateException("Token non valido!");
 		}

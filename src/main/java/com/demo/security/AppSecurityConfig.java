@@ -3,30 +3,25 @@ package com.demo.security;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.demo.security.filter.JwtCheckTokenFilter;
 import com.demo.security.filter.UsernameAndPasswordJwtFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private final PasswordEncoder passwordEncoder;
@@ -38,6 +33,21 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		this.passwordEncoder = passwordEncoder;
 		this.mySecurityUserService = mySecurityUserService;
 	}
+	
+	
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring()
+			.antMatchers("/", "index", "js", "css", "images")
+            .antMatchers(HttpMethod.OPTIONS, "/**")
+            .antMatchers("/app/**/*.{js,html}")
+            .antMatchers("/i18n/**")
+            .antMatchers("/content/**")
+            .antMatchers("/h2-console/**")
+            .antMatchers("/swagger-ui/index.html")
+            .antMatchers("/test/**");
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -48,13 +58,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.addFilter(new UsernameAndPasswordJwtFilter(authenticationManager()))
 				.addFilterAfter(new JwtCheckTokenFilter(), UsernameAndPasswordJwtFilter.class)
 				.authorizeRequests()
-				.antMatchers("/", "index", "js", "css", "images").permitAll() // permetti il traffico verso / e verso index, ecc
-				.antMatchers("/api/**").hasAuthority(UserPermission.USER_WRITE.getPermission())
-				.antMatchers(HttpMethod.POST, "/admin/api/**").hasAuthority(UserPermission.ADMIN_WRITE.getPermission())
-				.antMatchers(HttpMethod.DELETE, "/admin/api/**").hasAnyAuthority(UserPermission.ADMIN_WRITE.getPermission())
-				.antMatchers(HttpMethod.GET, "/admin/api/**").hasAnyAuthority(UserPermission.ADMIN_WRITE.getPermission(), UserPermission.ADMIN_READ.getPermission())
-				.anyRequest()
-				.authenticated()
+				.antMatchers("/api/**").authenticated()
 				.and()
 				.httpBasic();
 	}
